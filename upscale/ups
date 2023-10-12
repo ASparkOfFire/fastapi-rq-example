@@ -1,0 +1,32 @@
+import subprocess
+import threading
+import re
+import os
+import shutil
+
+def upscale(input_path, output_path, tta=False, model_name="remacri"):
+
+    # define upscale command
+    upscale_command = f'./upscayl -i "{input_path}" -o "{output_path}" -n "{model_name}"'
+
+    if(tta==True):
+      upscale_command = upscale_command + " " + "-x"
+
+    print(upscale_command)
+
+    # Execute the upscayl command
+    process = subprocess.Popen(upscale_command, shell=True, stdout=subprocess.PIPE, capture_output=True, text=True)
+
+    directory_path = os.path.dirname(input_path)
+
+    if os.path.exists(directory_path):
+        try:
+            shutil.rmtree(directory_path)
+            print(f"Deleted directory '{directory_path}' and its contents.")
+        except Exception as e:
+            print(f"An error occurred while deleting '{directory_path}': {e}")
+    else:
+        print(f"Directory '{directory_path}' does not exist.")
+
+if __name__ == "__main__":
+    upscale("input.png", "output.png")
